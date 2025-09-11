@@ -17,6 +17,6 @@ az aks create \
     --generate-ssh-keys
 
 echo "Configuring kubectl..."
-az aks get-credentials --resource-group $RESOURCE_GROUP --name $CLUSTER_NAME --overwrite-existing
+az aks get-credentials --resource-group $RESOURCE_GROUP --name $CLUSTER_NAME --admin --overwrite-existing
 
 echo "Cluster ready! Use './delete-aks-cluster.sh' to remove it when done."
