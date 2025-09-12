@@ -13,7 +13,7 @@ az aks create \
     --name $CLUSTER_NAME \
     --node-count 1 \
     --network-plugin azure \
-    --load-balancer-sku standard \
+    --enable-managed-identity \
     --generate-ssh-keys
 
 echo "Configuring kubectl..."
