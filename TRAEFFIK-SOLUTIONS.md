@@ -81,14 +81,14 @@ spec:
             pathType: Prefix
             backend:
               service:
-                name: simple-app1
+                name: simple-app1-cluster-ip
                 port:
                   number: 80
           - path: /app2
             pathType: Prefix
             backend:
               service:
-                name: simple-app2
+                name: simple-app2-cluster-ip
                 port:
                   number: 80
 ```

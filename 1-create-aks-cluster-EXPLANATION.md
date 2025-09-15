@@ -246,3 +246,21 @@ Internet Request
 This flow demonstrates how all the automatically created resources work together to provide a robust, scalable, and highly available path from the internet to your applications running in AKS.
 
 // ...existing code...
+
+
+# Where Traefik pods run on?
+
+To see where Traefik pods are running across your nodes, use this command:
+
+This will show you which specific worker nodes the Traefik pods are scheduled on.
+
+Key points about pod placement:
+
+* Traefik pods run on worker nodes only - not on the master node
+* The master node typically has taints that prevent regular workloads from being scheduled there
+* With 3 worker nodes, Traefik pods could be on any combination of them depending on:
+  * Your deployment's replica count
+  * Node resources and availability
+  * Any node selectors or affinity rules configured  
+  
+The -o wide flag will show you the NODE column so you can see exactly which of your 3 worker nodes are currently hosting the Traefik pods.

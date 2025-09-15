@@ -21,7 +21,7 @@ data:
             <html>
             <head><title>{app_name}</title></head>
             <body>
-                <h1>Welcome to {app_name}!</h1>
+                <h1>Welcome to first app to {app_name}!</h1>
                 <p>You requested: <strong>{path}</strong></p>
                 <p>This app handles any path natively - no middleware needed!</p>
                 <hr>
@@ -69,7 +69,7 @@ data:
             <html>
             <head><title>{app_name}</title></head>
             <body>
-                <h1>Welcome to {app_name}!</h1>
+                <h1>Welcome to second app to {app_name}!</h1>
                 <p>You requested: <strong>{path}</strong></p>
                 <p>This app handles any path natively - no middleware needed!</p>
                 <hr>
@@ -111,30 +111,30 @@ spec:
         app: simple-app1
     spec:
       containers:
-      - name: app
-        image: python:3.9-slim
-        ports:
-        - containerPort: 80
-        env:
-        - name: APP_NAME
-          value: "Simple App 1"
-        command:
-        - "python"
-        - "/app/app.py"
-        volumeMounts:
-        - name: app-code
-          mountPath: /app
-        resources:
-          requests:
-            memory: "64Mi"
-            cpu: "50m"
-          limits:
-            memory: "128Mi"
-            cpu: "100m"
+        - name: app
+          image: python:3.9-slim
+          ports:
+            - containerPort: 80
+          env:
+            - name: APP_NAME
+              value: "Simple App 1"
+          command:
+            - "python"
+            - "/app/app.py"
+          volumeMounts:
+            - name: app-code
+              mountPath: /app
+          resources:
+            requests:
+              memory: "64Mi"
+              cpu: "50m"
+            limits:
+              memory: "128Mi"
+              cpu: "100m"
       volumes:
-      - name: app-code
-        configMap:
-          name: simple-app1-config
+        - name: app-code
+          configMap:
+            name: simple-app1-config
 ---
 apiVersion: apps/v1
 kind: Deployment
@@ -153,49 +153,51 @@ spec:
         app: simple-app2
     spec:
       containers:
-      - name: app
-        image: python:3.9-slim
-        ports:
-        - containerPort: 80
-        env:
-        - name: APP_NAME
-          value: "Simple App 2"
-        command:
-        - "python"
-        - "/app/app.py"
-        volumeMounts:
-        - name: app-code
-          mountPath: /app
-        resources:
-          requests:
-            memory: "64Mi"
-            cpu: "50m"
-          limits:
-            memory: "128Mi"
-            cpu: "100m"
+        - name: app
+          image: python:3.9-slim
+          ports:
+            - containerPort: 80
+          env:
+            - name: APP_NAME
+              value: "Simple App 2"
+          command:
+            - "python"
+            - "/app/app.py"
+          volumeMounts:
+            - name: app-code
+              mountPath: /app
+          resources:
+            requests:
+              memory: "64Mi"
+              cpu: "50m"
+            limits:
+              memory: "128Mi"
+              cpu: "100m"
       volumes:
-      - name: app-code
-        configMap:
-          name: simple-app2-config
+        - name: app-code
+          configMap:
+            name: simple-app2-config
 ---
 apiVersion: v1
 kind: Service
 metadata:
-  name: simple-app1
+  name: simple-app1-cluster-ip
 spec:
+  type: ClusterIP
   selector:
     app: simple-app1
   ports:
-  - port: 80
-    targetPort: 80
+    - port: 80
+      targetPort: 80
 ---
 apiVersion: v1
 kind: Service
 metadata:
-  name: simple-app2
+  name: simple-app2-cluster-ip
 spec:
+  type: ClusterIP
   selector:
     app: simple-app2
   ports:
-  - port: 80
-    targetPort: 80
+    - port: 80
+      targetPort: 80
