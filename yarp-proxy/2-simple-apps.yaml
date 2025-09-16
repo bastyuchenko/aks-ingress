@@ -1,0 +1,203 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: simple-app1-config
+data:
+  app.py: |
+    from http.server import HTTPServer, BaseHTTPRequestHandler
+    import os
+
+    class SimpleHandler(BaseHTTPRequestHandler):
+        def do_GET(self):
+            self.send_response(200)
+            self.send_header('Content-type', 'text/html')
+            self.end_headers()
+            
+            app_name = os.getenv('APP_NAME', 'App 1')
+            path = self.path
+            
+            html_content = f"""
+            <!DOCTYPE html>
+            <html>
+            <head><title>{app_name}</title></head>
+            <body>
+                <h1>Welcome to first app to {app_name}!</h1>
+                <p>You requested: <strong>{path}</strong></p>
+                <p>This app handles any path natively - no middleware needed!</p>
+                <hr>
+                <p>Try these paths:</p>
+                <ul>
+                    <li><a href="/app1">/{app_name.lower().replace(' ', '')}</a></li>
+                    <li><a href="/app1/test">/app1/test</a></li>
+                    <li><a href="/app1/anything">/app1/anything</a></li>
+                </ul>
+            </body>
+            </html>
+            """
+            
+            self.wfile.write(html_content.encode())
+            
+        def log_message(self, format, *args):
+            # Suppress default logging
+            pass
+
+    if __name__ == '__main__':
+        server = HTTPServer(('0.0.0.0', 80), SimpleHandler)
+        print(f"Starting server on port 80...")
+        server.serve_forever()
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: simple-app2-config
+data:
+  app.py: |
+    from http.server import HTTPServer, BaseHTTPRequestHandler
+    import os
+
+    class SimpleHandler(BaseHTTPRequestHandler):
+        def do_GET(self):
+            self.send_response(200)
+            self.send_header('Content-type', 'text/html')
+            self.end_headers()
+            
+            app_name = os.getenv('APP_NAME', 'App 2')
+            path = self.path
+            
+            html_content = f"""
+            <!DOCTYPE html>
+            <html>
+            <head><title>{app_name}</title></head>
+            <body>
+                <h1>Welcome to second app to {app_name}!</h1>
+                <p>You requested: <strong>{path}</strong></p>
+                <p>This app handles any path natively - no middleware needed!</p>
+                <hr>
+                <p>Try these paths:</p>
+                <ul>
+                    <li><a href="/app2">/{app_name.lower().replace(' ', '')}</a></li>
+                    <li><a href="/app2/test">/app2/test</a></li>
+                    <li><a href="/app2/anything">/app2/anything</a></li>
+                </ul>
+            </body>
+            </html>
+            """
+            
+            self.wfile.write(html_content.encode())
+            
+        def log_message(self, format, *args):
+            # Suppress default logging
+            pass
+
+    if __name__ == '__main__':
+        server = HTTPServer(('0.0.0.0', 80), SimpleHandler)
+        print(f"Starting server on port 80...")
+        server.serve_forever()
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: simple-app1
+  labels:
+    app: simple-app1
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: simple-app1
+  template:
+    metadata:
+      labels:
+        app: simple-app1
+    spec:
+      containers:
+        - name: app
+          image: python:3.9-slim
+          ports:
+            - containerPort: 80
+          env:
+            - name: APP_NAME
+              value: "Simple App 1"
+          command:
+            - "python"
+            - "/app/app.py"
+          volumeMounts:
+            - name: app-code
+              mountPath: /app
+          resources:
+            requests:
+              memory: "64Mi"
+              cpu: "50m"
+            limits:
+              memory: "128Mi"
+              cpu: "100m"
+      volumes:
+        - name: app-code
+          configMap:
+            name: simple-app1-config
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: simple-app2
+  labels:
+    app: simple-app2
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: simple-app2
+  template:
+    metadata:
+      labels:
+        app: simple-app2
+    spec:
+      containers:
+        - name: app
+          image: python:3.9-slim
+          ports:
+            - containerPort: 80
+          env:
+            - name: APP_NAME
+              value: "Simple App 2"
+          command:
+            - "python"
+            - "/app/app.py"
+          volumeMounts:
+            - name: app-code
+              mountPath: /app
+          resources:
+            requests:
+              memory: "64Mi"
+              cpu: "50m"
+            limits:
+              memory: "128Mi"
+              cpu: "100m"
+      volumes:
+        - name: app-code
+          configMap:
+            name: simple-app2-config
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: simple-app1-cluster-ip
+spec:
+  type: ClusterIP
+  selector:
+    app: simple-app1
+  ports:
+    - port: 80
+      targetPort: 80
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: simple-app2-cluster-ip
+spec:
+  type: ClusterIP
+  selector:
+    app: simple-app2
+  ports:
+    - port: 80
+      targetPort: 80

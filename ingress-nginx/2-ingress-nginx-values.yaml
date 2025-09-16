@@ -1,0 +1,9 @@
+controller:
+  service:
+    type: LoadBalancer
+    externalTrafficPolicy: Local
+    annotations:
+      service.beta.kubernetes.io/azure-load-balancer-health-probe-request-path: "/healthz"
+  config:
+    use-forwarded-headers: "true"
+    compute-full-forwarded-for: "true"

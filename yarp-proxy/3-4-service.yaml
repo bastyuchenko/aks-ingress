@@ -1,0 +1,15 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: yarp-proxy-service
+  namespace: yarp-proxy
+  labels:
+    app: yarp-proxy
+spec:
+  type: LoadBalancer
+  ports:
+    - port: 80
+      targetPort: 80
+      name: http
+  selector:
+    app: yarp-proxy
