@@ -1,0 +1,22 @@
+{
+    "target": {
+        "path": {
+            "container": "yarp-proxy", //container name
+            "deployment": "yarp-proxy" //deployment name
+        },
+        "namespace": "yarp-proxy"
+    },
+    "pause": true, //To freeze running containers
+    "feature": {
+        "env": true, // If we need to override any environment variables we need to define here
+        "fs": {
+            "mode": "read" // read from remote container filesystem
+        },
+        "network": {
+            "incoming": "steal" //steals the traffic
+        }
+    },
+    "agent": {
+        "namespace": "yarp-proxy" //namespace where agent should be installed
+    }
+}

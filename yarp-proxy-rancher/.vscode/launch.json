@@ -1,0 +1,32 @@
+{
+    "version": "0.2.0",
+    "configurations": [
+        {
+            "name": ".NET Core Launch (YARP Proxy)",
+            "type": "coreclr",
+            "request": "launch",
+            "preLaunchTask": "build",
+            "program": "${workspaceFolder}/yarp-proxy/bin/Debug/net8.0/YarpProxy.dll",
+            "args": [],
+            "cwd": "${workspaceFolder}/yarp-proxy",
+            "stopAtEntry": false,
+            "console": "internalConsole",
+            "env": {
+                "ASPNETCORE_URLS": "http://localhost:8080"
+            }
+        },
+        {
+            "name": "debug",
+            "type": "coreclr",
+            "request": "launch",
+            "preLaunchTask": "build",
+            "program": "${workspaceFolder}/yarp-proxy/bin/Debug/net8.0/YarpProxy.dll",
+            "args": [],
+            "cwd": "${workspaceFolder}/yarp-proxy",
+            "stopAtEntry": false,
+            "env": {
+                "ASPNETCORE_ENVIRONMENT": "Development"
+            }
+        }
+    ]
+}
